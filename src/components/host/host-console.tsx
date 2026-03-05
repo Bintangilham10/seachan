@@ -183,11 +183,11 @@ export function HostConsole() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-md space-y-3 sm:space-y-4 lg:max-w-6xl">
       <Panel className="space-y-4 bg-white/95">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="font-display text-3xl font-extrabold text-slate-900">Host Console</h1>
+            <h1 className="font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">Host Console</h1>
             <p className="text-sm font-semibold text-slate-600">
               Manage room flow, timer progression, and live ranking.
             </p>
@@ -234,12 +234,12 @@ export function HostConsole() {
       </Panel>
 
       {roomCode && (
-        <div className="grid gap-4 xl:grid-cols-[360px_1fr]">
+        <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
           <Panel className="space-y-4 bg-white/95">
-            <h2 className="font-display text-xl font-extrabold text-slate-900">Join via QR</h2>
+            <h2 className="font-display text-lg font-extrabold text-slate-900 sm:text-xl">Join via QR</h2>
             <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-500 px-4 py-3 text-white">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-100">Room Code</p>
-              <p className="mt-1 text-3xl font-extrabold tracking-[0.2em]">{roomCode}</p>
+              <p className="mt-1 text-2xl font-extrabold tracking-[0.2em] sm:text-3xl">{roomCode}</p>
             </div>
 
             <div className="flex justify-center rounded-2xl border border-slate-200 bg-white p-4">
@@ -247,20 +247,20 @@ export function HostConsole() {
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(joinUrl)}`}
                   alt="QR code room"
-                  className="h-56 w-56 rounded-xl"
+                  className="h-52 w-52 rounded-xl sm:h-56 sm:w-56"
                 />
               ) : (
-                <div className="h-56 w-56 animate-pulse rounded-xl bg-slate-100" />
+                <div className="h-52 w-52 animate-pulse rounded-xl bg-slate-100 sm:h-56 sm:w-56" />
               )}
             </div>
 
             <div className="rounded-2xl bg-slate-100 p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Players Joined</p>
-              <p className="mt-1 text-3xl font-extrabold text-slate-900">{joinedPlayers} / 50</p>
+              <p className="mt-1 text-2xl font-extrabold text-slate-900 sm:text-3xl">{joinedPlayers} / 50</p>
             </div>
-            <p className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <p className="flex break-all text-xs font-semibold text-slate-500">
               <QrCode size={14} />
-              Link: {joinUrl || "-"}
+              <span className="ml-2">Link: {joinUrl || "-"}</span>
             </p>
           </Panel>
 
@@ -273,7 +273,7 @@ export function HostConsole() {
                       SOAL {snapshot?.room.current_question_index ? snapshot.room.current_question_index + 1 : 1}/
                       {snapshot?.totalQuestions ?? 0}
                     </p>
-                    <p className="text-4xl font-extrabold text-slate-900">{remaining}s</p>
+                    <p className="text-2xl font-extrabold text-slate-900 sm:text-4xl">{remaining}s</p>
                   </div>
                   <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200">
                     <div
@@ -283,7 +283,7 @@ export function HostConsole() {
                   </div>
 
                   <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                    <p className="text-xl font-bold leading-snug text-slate-900">{currentQuestion.text}</p>
+                    <p className="text-base font-bold leading-snug text-slate-900 sm:text-xl">{currentQuestion.text}</p>
                   </div>
 
                   <div>
@@ -329,7 +329,7 @@ export function HostConsole() {
               {(snapshot?.players.length ?? 0) === 0 ? (
                 <p className="text-sm font-semibold text-slate-500">No members in room yet.</p>
               ) : (
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-4">
                   {(snapshot?.players ?? []).slice(0, 16).map((player, index) => (
                     <div key={player.id} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-center">
                       <div
@@ -337,7 +337,7 @@ export function HostConsole() {
                       >
                         {player.display_name.slice(0, 1).toUpperCase()}
                       </div>
-                      <p className="mt-1 truncate text-xs font-bold text-slate-700">{player.display_name}</p>
+                      <p className="mt-1 truncate text-[11px] font-bold text-slate-700 sm:text-xs">{player.display_name}</p>
                     </div>
                   ))}
                 </div>
@@ -369,9 +369,9 @@ export function HostConsole() {
                             <span className="text-sm font-extrabold text-slate-700">{index + 1}</span>
                           )}
                         </div>
-                        <p className="font-extrabold text-slate-800">{player.display_name}</p>
+                        <p className="text-sm font-extrabold text-slate-800 sm:text-base">{player.display_name}</p>
                       </div>
-                      <p className="text-lg font-extrabold text-slate-900">{player.total_score}</p>
+                      <p className="text-base font-extrabold text-slate-900 sm:text-lg">{player.total_score}</p>
                     </div>
                   ))}
                 </div>

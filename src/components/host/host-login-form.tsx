@@ -38,9 +38,9 @@ export function HostLoginForm() {
   };
 
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="mx-auto max-w-md">
       <Panel className="space-y-5">
-        <h1 className="font-display text-3xl font-extrabold text-slate-900">Host Login</h1>
+        <h1 className="font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">Host Login</h1>
         <p className="text-sm text-slate-600">Login required before creating and controlling quiz rooms.</p>
         <form onSubmit={login} className="space-y-3">
           <div className="space-y-1">
