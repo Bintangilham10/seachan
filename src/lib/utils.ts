@@ -1,4 +1,3 @@
-import { createHash, randomBytes, randomUUID } from "crypto";
 import { ROOM_CODE_LENGTH } from "@/lib/constants";
 
 export function cn(...inputs: Array<string | undefined | null | false>) {
@@ -13,18 +12,6 @@ export function generateRoomCode(length = ROOM_CODE_LENGTH) {
     result += ROOM_CHARS[Math.floor(Math.random() * ROOM_CHARS.length)];
   }
   return result;
-}
-
-export function generateHostToken() {
-  return randomBytes(18).toString("hex");
-}
-
-export function hashHostToken(token: string) {
-  return createHash("sha256").update(token).digest("hex");
-}
-
-export function generateGuestId() {
-  return randomUUID();
 }
 
 export function getRemainingSeconds(startedAt: string | null, timeLimit: number) {

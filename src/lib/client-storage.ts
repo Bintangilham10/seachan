@@ -1,9 +1,14 @@
 "use client";
 
-import { generateGuestId } from "@/lib/utils";
-
 const GUEST_KEY = "qrquiz_guest_id";
 const LAST_HOST_KEY = "qrquiz_host_last";
+
+function generateGuestId() {
+  if (typeof window !== "undefined" && typeof window.crypto?.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  return `guest_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+}
 
 export function getOrCreateGuestId() {
   if (typeof window === "undefined") return "";

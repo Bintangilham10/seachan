@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
-import { generateHostToken, generateRoomCode, hashHostToken } from "@/lib/utils";
+import { generateRoomCode } from "@/lib/utils";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 import { fail, ok } from "@/lib/server/http";
+import { generateHostToken, hashHostToken } from "@/lib/server/security";
 
 export async function POST(request: NextRequest) {
   const supabase = getSupabaseAdminClient();
