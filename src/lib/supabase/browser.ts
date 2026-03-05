@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
-import { getPublicEnv } from "@/lib/env";
+import { getPublicEnv } from "@/lib/env/public";
 
 let browserClient: ReturnType<typeof createClient> | null = null;
 

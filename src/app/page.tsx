@@ -10,20 +10,23 @@ export default function HomePage() {
         <div className="hero-reveal inline-flex max-w-full items-center gap-3 rounded-3xl border border-white/80 bg-white/90 px-5 py-4 shadow-[0_20px_38px_-28px_rgba(15,23,42,0.65)]">
           <Sparkles className="h-7 w-7 text-amber-500" />
           <h1 className="font-display gradient-title text-4xl font-extrabold leading-none sm:text-6xl">
-            QR Quiz Battle
+            Seachan Quiz Battle
           </h1>
         </div>
         <p className="mx-auto mt-6 max-w-3xl text-xl font-semibold leading-relaxed text-slate-700 sm:text-3xl">
-          The ultimate real-time trivia experience. Host a room, scan to join, and race for the top spot.
+          Showcase project: a real-time game, create a room, scan the QR to join, and live
+          leaderboard.
         </p>
 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm font-bold text-slate-700">
           <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">
             <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-500" />
-            Realtime updates
+            Live rooms
           </span>
-          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">No app install needed</span>
-          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">Up to 50 players per room</span>
+          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">QR join</span>
+          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">
+            Up to 50 members loh ya
+          </span>
         </div>
       </section>
 

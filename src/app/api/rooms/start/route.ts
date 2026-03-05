@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { fail, ok } from "@/lib/server/http";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
-import { hashHostToken } from "@/lib/utils";
+import { hashHostToken } from "@/lib/server/security";
 
 export async function POST(request: NextRequest) {
   const supabase = getSupabaseAdminClient();
