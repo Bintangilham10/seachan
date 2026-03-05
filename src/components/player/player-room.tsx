@@ -186,7 +186,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
 
   if (loading && !snapshot) {
     return (
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-md">
         <Panel>
           <p className="text-sm text-slate-600">Loading room {normalizedRoomCode}...</p>
         </Panel>
@@ -196,7 +196,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
 
   if (error && !snapshot) {
     return (
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-md">
         <Panel className="space-y-3">
           <h1 className="text-2xl font-bold">Room Not Available</h1>
           <p className="text-sm text-rose-600">{error}</p>
@@ -210,11 +210,11 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
 
   if (!playerId) {
     return (
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-md">
         <Panel className="space-y-5 bg-white/92">
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-700">Join Room</p>
-            <h1 className="font-display mt-2 text-3xl font-extrabold text-slate-900">{normalizedRoomCode}</h1>
+            <h1 className="font-display mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">{normalizedRoomCode}</h1>
           </div>
           <form onSubmit={joinRoom} className="space-y-3">
             <input
@@ -222,9 +222,9 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
               onChange={(event) => setDisplayName(event.target.value)}
               maxLength={24}
               placeholder="Your nickname"
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-semibold outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[15px] font-semibold outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 sm:text-base"
             />
-            <Button type="submit" disabled={joining} className="w-full py-3 text-lg">
+            <Button type="submit" disabled={joining} className="w-full py-3 text-base sm:text-lg">
               {joining ? "Joining..." : "Join Room"}
             </Button>
           </form>
@@ -235,15 +235,15 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-xl space-y-4">
+    <div className="mx-auto max-w-md space-y-3 sm:space-y-4">
       <Panel className="space-y-2 bg-white/94">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="font-display text-2xl font-extrabold text-slate-900">Seachan Quiz</h1>
+          <h1 className="font-display text-xl font-extrabold text-slate-900 sm:text-2xl">Seachan Quiz</h1>
           {snapshot?.room && <StatusBadge status={snapshot.room.status} />}
         </div>
         <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-500 px-4 py-3 text-center text-white">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-100">Room</p>
-          <p className="text-3xl font-extrabold tracking-[0.2em]">{normalizedRoomCode}</p>
+          <p className="text-2xl font-extrabold tracking-[0.2em] sm:text-3xl">{normalizedRoomCode}</p>
         </div>
         <p className="text-sm font-semibold text-slate-700">
           You are <span className="font-extrabold">{displayName}</span>
@@ -253,7 +253,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
       {snapshot?.room.status === "lobby" && (
         <Panel className="space-y-4 bg-white/95">
           <div className="text-center">
-            <p className="font-display text-3xl font-extrabold uppercase tracking-wide text-slate-900">
+            <p className="font-display text-2xl font-extrabold uppercase tracking-wide text-slate-900 sm:text-3xl">
               Waiting for Host...
             </p>
             <p className="mt-1 text-sm font-semibold text-slate-600">
@@ -261,7 +261,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-3 gap-3">
             {snapshot.players.slice(0, 12).map((player, index) => (
               <div key={player.id} className="space-y-1 text-center">
                 <div
@@ -274,7 +274,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
             ))}
           </div>
 
-          <Button className="w-full py-3 text-lg" disabled>
+          <Button className="w-full py-3 text-base sm:text-lg" disabled>
             I&apos;M READY!
           </Button>
         </Panel>
@@ -296,11 +296,11 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
             </div>
             <div className="text-right">
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500">Score</p>
-              <p className="text-3xl font-extrabold text-slate-900">{myStanding?.score ?? 0}</p>
+              <p className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{myStanding?.score ?? 0}</p>
             </div>
           </div>
 
-          <div className="relative mx-auto h-52 w-52 sm:h-56 sm:w-56">
+          <div className="relative mx-auto h-40 w-40 sm:h-56 sm:w-56">
             <div
               className="absolute inset-0 rounded-full shadow-[0_0_35px_rgba(132,204,22,0.35)]"
               style={{
@@ -310,14 +310,14 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
             <div className="absolute inset-[12px] rounded-full bg-white" />
             <div className="absolute inset-0 flex items-center justify-center text-center">
               <div>
-                <p className="text-7xl font-extrabold leading-none text-slate-900">{remaining}</p>
+                <p className="text-5xl font-extrabold leading-none text-slate-900 sm:text-7xl">{remaining}</p>
                 <p className="text-sm font-extrabold uppercase tracking-wide text-slate-500">seconds</p>
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <p className="text-xl font-bold leading-snug text-slate-900">{currentQuestion.text}</p>
+            <p className="text-lg font-bold leading-snug text-slate-900 sm:text-xl">{currentQuestion.text}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -338,7 +338,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
                   }}
                   disabled={hasAnsweredCurrent || remaining <= 0 || submitting}
                 >
-                  <p className="text-3xl font-extrabold text-slate-900">{optionLabels[index] ?? "?"}</p>
+                  <p className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{optionLabels[index] ?? "?"}</p>
                   <p className="mt-1 text-sm font-bold uppercase text-slate-700">{option.text}</p>
                 </button>
               );
@@ -351,7 +351,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
                 submitAnswer().catch(() => undefined);
               }}
               disabled={submitting || hasAnsweredCurrent || !selectedOptionId || remaining <= 0}
-              className="w-full py-3 text-lg"
+              className="w-full py-3 text-base sm:text-lg"
             >
               {hasAnsweredCurrent ? "Jawaban Terkunci!" : submitting ? "Submitting..." : "Submit Answer"}
             </Button>
@@ -367,7 +367,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
       {snapshot?.room.status === "finished" && (
         <Panel className="space-y-4 bg-white/95">
           <div className="text-center">
-            <p className="font-display text-3xl font-extrabold text-slate-900">Hasil Quiz</p>
+            <p className="font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">Hasil Quiz</p>
             {myStanding && (
               <p className="mt-1 text-sm font-semibold text-slate-600">
                 Final Rank <strong>#{myStanding.rank}</strong> with <strong>{myStanding.score}</strong> points.
@@ -429,7 +429,7 @@ export function PlayerRoom({ roomCode }: { roomCode: string }) {
       )}
 
       {myStanding && snapshot?.room.status !== "finished" && (
-        <div className="flex items-center justify-between rounded-2xl border border-white/80 bg-white/80 px-4 py-2">
+        <div className="sticky bottom-2 z-20 flex items-center justify-between rounded-2xl border border-white/80 bg-white/95 px-4 py-2 shadow-sm backdrop-blur">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
             <Users size={16} />
             <span>

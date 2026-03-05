@@ -22,10 +22,10 @@ export function JoinRoomForm() {
         value={code}
         onChange={(event) => setCode(event.target.value)}
         placeholder="ENTER 6-DIGIT CODE"
-        className="w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-4 text-center text-2xl font-extrabold uppercase tracking-[0.25em] text-slate-700 outline-none ring-4 ring-transparent transition focus:border-sky-300 focus:ring-sky-100"
+        className="w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-center text-xl font-extrabold uppercase tracking-[0.22em] text-slate-700 outline-none ring-4 ring-transparent transition focus:border-sky-300 focus:ring-sky-100 sm:py-4 sm:text-2xl sm:tracking-[0.25em]"
         maxLength={6}
       />
-      <Button type="submit" className="group w-full gap-2 py-4 text-2xl">
+      <Button type="submit" className="group w-full gap-2 py-3 text-xl sm:py-4 sm:text-2xl">
         Join Room
         <ArrowRight size={24} className="transition-transform group-hover:translate-x-1" />
       </Button>
