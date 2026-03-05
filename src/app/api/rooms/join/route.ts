@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     return fail("Room not found.", 404);
   }
 
-  if (room.status !== "lobby") {
-    return fail("Room is no longer accepting new players.");
+  if (room.status === "finished") {
+    return fail("Room has finished.");
   }
 
   const { data: existingPlayer } = await supabase
