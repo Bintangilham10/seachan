@@ -92,12 +92,29 @@ export function useRoomRealtime({ roomCode, playerId }: UseRoomRealtimeOptions) 
           refresh().catch(() => undefined);
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "CHANNEL_ERROR") {
+          setError("Realtime disconnected. Syncing with fallback polling...");
+        } else if (status === "SUBSCRIBED") {
+          setError(null);
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel).catch(() => undefined);
     };
   }, [playerId, refresh, roomCode]);
+
+  useEffect(() => {
+    if (!roomCode) return;
+
+    // Fallback sync when websocket/realtime is unavailable.
+    const interval = setInterval(() => {
+      refresh().catch(() => undefined);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [refresh, roomCode]);
 
   return {
     snapshot,
