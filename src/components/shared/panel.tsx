@@ -6,5 +6,14 @@ interface PanelProps {
 }
 
 export function Panel({ className, children }: PropsWithChildren<PanelProps>) {
-  return <section className={cn("rounded-xl border border-slate-200 bg-white p-5", className)}>{children}</section>;
+  return (
+    <section
+      className={cn(
+        "rounded-[1.75rem] border border-white/70 bg-white/82 p-6 shadow-[0_20px_60px_-42px_rgba(15,23,42,0.65)] backdrop-blur-sm",
+        className
+      )}
+    >
+      {children}
+    </section>
+  );
 }

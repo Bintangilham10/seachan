@@ -1,46 +1,92 @@
 import Link from "next/link";
+import { Clock3, QrCode, Sparkles, Trophy, UsersRound } from "lucide-react";
 import { JoinRoomForm } from "@/components/shared/join-room-form";
 import { Panel } from "@/components/shared/panel";
 
 export default function HomePage() {
   return (
-    <div className="space-y-6">
-      <Panel className="bg-gradient-to-br from-brand-600 to-brand-800 text-white">
-        <p className="text-sm uppercase tracking-[0.2em] text-brand-100">Realtime Quiz Showcase</p>
-        <h1 className="mt-2 text-3xl font-bold sm:text-4xl">QR Quiz Battle</h1>
-        <p className="mt-3 max-w-2xl text-sm text-brand-100 sm:text-base">
-          Host creates a room, participants scan QR, everyone answers live, and rankings update in realtime.
+    <div className="relative space-y-8 pb-8">
+      <section className="mx-auto max-w-4xl text-center">
+        <div className="hero-reveal inline-flex max-w-full items-center gap-3 rounded-3xl border border-white/80 bg-white/90 px-5 py-4 shadow-[0_20px_38px_-28px_rgba(15,23,42,0.65)]">
+          <Sparkles className="h-7 w-7 text-amber-500" />
+          <h1 className="font-display gradient-title text-4xl font-extrabold leading-none sm:text-6xl">
+            QR Quiz Battle
+          </h1>
+        </div>
+        <p className="mx-auto mt-6 max-w-3xl text-xl font-semibold leading-relaxed text-slate-700 sm:text-3xl">
+          The ultimate real-time trivia experience. Host a room, scan to join, and race for the top spot.
         </p>
-      </Panel>
 
-      <Panel className="space-y-4">
-        <h2 className="text-xl font-semibold">Join a Room</h2>
-        <p className="text-sm text-slate-600">Scan QR from host screen or enter room code manually.</p>
-        <JoinRoomForm />
-      </Panel>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm font-bold text-slate-700">
+          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">
+            <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-500" />
+            Realtime updates
+          </span>
+          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">No app install needed</span>
+          <span className="rounded-full bg-white/85 px-4 py-2 shadow-sm ring-1 ring-white">Up to 50 players per room</span>
+        </div>
+      </section>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Panel className="space-y-3">
-          <h3 className="font-semibold">Become a Host</h3>
-          <p className="text-sm text-slate-600">Create a room, manage question flow, and watch live rankings.</p>
+      <section className="grid gap-6 lg:grid-cols-2">
+        <Panel className="card-lift stagger-in space-y-5 p-8 [animation-delay:80ms]">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-sky-100">
+            <UsersRound className="h-10 w-10 text-sky-600" />
+          </div>
+          <div className="space-y-2 text-center">
+            <h2 className="font-display text-4xl font-extrabold text-slate-900">Join a Game</h2>
+            <p className="mx-auto max-w-xl text-lg leading-relaxed text-slate-600">
+              Enter a room code or scan the host QR to jump straight into the arena.
+            </p>
+          </div>
+          <JoinRoomForm />
+        </Panel>
+
+        <Panel className="card-lift stagger-in flex flex-col justify-between space-y-6 p-8 [animation-delay:170ms]">
+          <div className="space-y-4 text-center">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-orange-100">
+              <Trophy className="h-10 w-10 text-orange-600" />
+            </div>
+            <h2 className="font-display text-4xl font-extrabold text-slate-900">Host a Game</h2>
+            <p className="mx-auto max-w-xl text-lg leading-relaxed text-slate-600">
+              Create a room in one click, show the QR, and run interactive live quiz rounds.
+            </p>
+          </div>
           <Link
             href="/host"
-            className="inline-flex rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+            className="inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-fuchsia-500 via-rose-500 to-orange-400 px-6 py-5 text-3xl font-extrabold text-white shadow-[0_24px_45px_-30px_rgba(225,29,72,0.8)] transition hover:-translate-y-0.5 hover:brightness-105"
           >
-            Open Host Console
+            Quick Start Host Mode
           </Link>
+          <p className="text-center text-sm font-semibold text-slate-500">Free forever. Guest mode by default.</p>
         </Panel>
-        <Panel className="space-y-3">
-          <h3 className="font-semibold">Global Leaderboard</h3>
-          <p className="text-sm text-slate-600">Top 10 players based on all-time accumulated scores.</p>
-          <Link
-            href="/leaderboard"
-            className="inline-flex rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900"
-          >
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <Panel className="card-lift stagger-in space-y-2 p-5 [animation-delay:230ms]">
+          <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100">
+            <QrCode className="h-6 w-6 text-brand-700" />
+          </div>
+          <h3 className="font-display text-lg font-extrabold">QR Join Flow</h3>
+          <p className="text-sm text-slate-600">Players just scan and play, no signup required.</p>
+        </Panel>
+        <Panel className="card-lift stagger-in space-y-2 p-5 [animation-delay:280ms]">
+          <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100">
+            <Clock3 className="h-6 w-6 text-emerald-700" />
+          </div>
+          <h3 className="font-display text-lg font-extrabold">Timer + Speed Bonus</h3>
+          <p className="text-sm text-slate-600">Faster correct answers earn more points automatically.</p>
+        </Panel>
+        <Panel className="card-lift stagger-in space-y-2 p-5 [animation-delay:330ms]">
+          <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100">
+            <Sparkles className="h-6 w-6 text-amber-600" />
+          </div>
+          <h3 className="font-display text-lg font-extrabold">Global Top 10</h3>
+          <p className="text-sm text-slate-600">Track top players across all finished matches.</p>
+          <Link href="/leaderboard" className="text-sm font-extrabold text-brand-700">
             View Leaderboard
           </Link>
         </Panel>
-      </div>
+      </section>
     </div>
   );
 }

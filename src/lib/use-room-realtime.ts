@@ -59,7 +59,14 @@ export function useRoomRealtime({ roomCode, playerId }: UseRoomRealtimeOptions) 
   useEffect(() => {
     if (!roomCode) return;
 
-    const supabase = getSupabaseBrowserClient();
+    let supabase: ReturnType<typeof getSupabaseBrowserClient>;
+    try {
+      supabase = getSupabaseBrowserClient();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to initialize realtime client.");
+      return;
+    }
+
     const channel = supabase
       .channel(`room-watch-${roomCode}-${playerId ?? "anon"}`)
       .on(
