@@ -102,9 +102,6 @@ exception
 end;
 $$;
 
-revoke all on function public.join_room_atomic(text, text, text) from public, anon, authenticated;
-grant execute on function public.join_room_atomic(text, text, text) to service_role;
-
 create or replace function public.submit_room_answer(
   p_room_code text,
   p_player_id uuid,
@@ -233,6 +230,3 @@ begin
     v_answer.score_awarded;
 end;
 $$;
-
-revoke all on function public.submit_room_answer(text, uuid, uuid, uuid) from public, anon, authenticated;
-grant execute on function public.submit_room_answer(text, uuid, uuid, uuid) to service_role;
