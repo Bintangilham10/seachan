@@ -4,6 +4,10 @@ import path from "node:path";
 import process from "node:process";
 import { createClient } from "@supabase/supabase-js";
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function parseDotEnv(text) {
   const result = {};
   for (const rawLine of text.split(/\r?\n/)) {
@@ -41,6 +45,7 @@ function getCookieHeader(response) {
 }
 
 async function requestJson(baseUrl, pathname, options = {}) {
+  const startedAt = Date.now();
   const response = await fetch(`${baseUrl}${pathname}`, options);
   let payload = null;
   try {
@@ -48,7 +53,75 @@ async function requestJson(baseUrl, pathname, options = {}) {
   } catch {
     payload = null;
   }
-  return { response, payload };
+  return {
+    response,
+    payload,
+    durationMs: Date.now() - startedAt
+  };
+}
+
+function summarizeDurations(label, values) {
+  if (!values.length) {
+    return `${label}: no data`;
+  }
+
+  const sorted = [...values].sort((left, right) => left - right);
+  const pick = (ratio) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * ratio))];
+  const total = sorted.reduce((sum, value) => sum + value, 0);
+
+  return `${label}: avg=${Math.round(total / sorted.length)}ms p50=${pick(0.5)}ms p95=${pick(0.95)}ms max=${sorted.at(-1)}ms`;
+}
+
+async function runStatePollers({
+  baseUrl,
+  roomCode,
+  playerIds,
+  pollerCount,
+  durationMs,
+  intervalMs
+}) {
+  const deadline = Date.now() + durationMs;
+  const metrics = {
+    ok: 0,
+    failed: 0,
+    durations: [],
+    failures: []
+  };
+
+  await Promise.all(
+    Array.from({ length: pollerCount }, async (_, index) => {
+      while (Date.now() < deadline) {
+        const playerId = playerIds.length ? playerIds[index % playerIds.length] : null;
+        const query = playerId ? `?playerId=${encodeURIComponent(playerId)}` : "";
+        try {
+          const result = await requestJson(baseUrl, `/api/rooms/${roomCode}/state${query}`, {
+            headers: {
+              "cache-control": "no-store"
+            }
+          });
+
+          metrics.durations.push(result.durationMs);
+          if (result.response.ok && result.payload?.ok) {
+            metrics.ok += 1;
+          } else {
+            metrics.failed += 1;
+            if (metrics.failures.length < 5) {
+              metrics.failures.push(`${result.response.status}: ${result.payload?.message ?? "unknown error"}`);
+            }
+          }
+        } catch (error) {
+          metrics.failed += 1;
+          if (metrics.failures.length < 5) {
+            metrics.failures.push(error instanceof Error ? error.message : "state poll failed");
+          }
+        }
+
+        await sleep(intervalMs);
+      }
+    })
+  );
+
+  return metrics;
 }
 
 async function ensureQuizSeed(env) {
@@ -118,6 +191,11 @@ async function main() {
   const localEnv = await loadLocalEnv();
   const baseUrl = getArg("base-url", "http://127.0.0.1:3000");
   const userCount = Number.parseInt(getArg("users", "55"), 10);
+  const mode = getArg("mode", "baseline");
+  const pollerCount = Number.parseInt(getArg("pollers", "30"), 10);
+  const pollSeconds = Number.parseInt(getArg("poll-seconds", "12"), 10);
+  const pollIntervalMs = Number.parseInt(getArg("poll-interval-ms", "1200"), 10);
+  const submitJitterMs = Number.parseInt(getArg("submit-jitter-ms", "1800"), 10);
   const username = getArg("username", process.env.HOST_LOGIN_USERNAME ?? localEnv.HOST_LOGIN_USERNAME ?? "");
   const password = getArg("password", process.env.HOST_LOGIN_PASSWORD ?? localEnv.HOST_LOGIN_PASSWORD ?? "");
 
@@ -126,6 +204,7 @@ async function main() {
   }
 
   console.log(`Base URL       : ${baseUrl}`);
+  console.log(`Mode           : ${mode}`);
   console.log(`Concurrent join: ${userCount}`);
 
   const login = await requestJson(baseUrl, "/api/host/login", {
@@ -203,7 +282,8 @@ async function main() {
         displayName,
         status: join.response.status,
         ok: Boolean(join.payload?.ok),
-        payload: join.payload
+        payload: join.payload,
+        durationMs: join.durationMs
       };
     })
   );
@@ -221,6 +301,7 @@ async function main() {
 
   console.log(`Join results   : joined=${joinSummary.joined} full=${joinSummary.full} failed=${joinSummary.failed}`);
   console.log(`Join duration  : ${joinDurationMs} ms`);
+  console.log(summarizeDurations("Join latency   ", joinResults.map((result) => result.durationMs)));
 
   const stateAfterJoin = await requestJson(baseUrl, `/api/rooms/${roomCode}/state`, {
     headers: {
@@ -270,9 +351,26 @@ async function main() {
     .filter((entry) => entry.ok)
     .map((entry) => entry.payload.data.player);
 
+  let statePollingPromise = null;
+  if (mode === "stress") {
+    console.log(`State pollers  : ${pollerCount} for ${pollSeconds}s @ ${pollIntervalMs}ms`);
+    statePollingPromise = runStatePollers({
+      baseUrl,
+      roomCode,
+      playerIds: joinedPlayers.map((player) => player.id),
+      pollerCount,
+      durationMs: pollSeconds * 1000,
+      intervalMs: pollIntervalMs
+    });
+  }
+
   const answerStartedAt = Date.now();
   const answerResults = await Promise.all(
     joinedPlayers.map(async (player) => {
+      if (mode === "stress" && submitJitterMs > 0) {
+        await sleep(Math.floor(Math.random() * submitJitterMs));
+      }
+
       const submit = await requestJson(baseUrl, "/api/answers/submit", {
         method: "POST",
         headers: {
@@ -289,7 +387,8 @@ async function main() {
       return {
         status: submit.response.status,
         ok: Boolean(submit.payload?.ok),
-        message: submit.payload?.message ?? ""
+        message: submit.payload?.message ?? "",
+        durationMs: submit.durationMs
       };
     })
   );
@@ -306,6 +405,7 @@ async function main() {
 
   console.log(`Answer results : success=${answerSummary.success} failed=${answerSummary.failed}`);
   console.log(`Answer duration: ${answerDurationMs} ms`);
+  console.log(summarizeDurations("Answer latency ", answerResults.map((result) => result.durationMs)));
 
   const finalState = await requestJson(baseUrl, `/api/rooms/${roomCode}/state`, {
     headers: {
@@ -324,6 +424,18 @@ async function main() {
     console.log("Sample join failures:");
     for (const item of failedJoins) {
       console.log(`- ${item.status}: ${item.message}`);
+    }
+  }
+
+  if (statePollingPromise) {
+    const stateMetrics = await statePollingPromise;
+    console.log(`State results  : ok=${stateMetrics.ok} failed=${stateMetrics.failed}`);
+    console.log(summarizeDurations("State latency  ", stateMetrics.durations));
+    if (stateMetrics.failures.length) {
+      console.log("Sample state failures:");
+      for (const item of stateMetrics.failures) {
+        console.log(`- ${item}`);
+      }
     }
   }
 }

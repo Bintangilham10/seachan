@@ -18,69 +18,32 @@ export async function POST(request: NextRequest) {
     return fail("roomCode, guestId, and displayName are required.");
   }
 
-  const { data: room, error: roomError } = await supabase
-    .from("rooms")
-    .select("id, status")
-    .eq("room_code", roomCode)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("join_room_atomic", {
+    p_room_code: roomCode,
+    p_display_name: displayName,
+    p_guest_id: guestId
+  });
 
-  if (roomError || !room) {
-    return fail(`Room ${roomCode} not found in active database.`, 404);
-  }
-
-  const { data: existingPlayer } = await supabase
-    .from("room_players")
-    .select("id, room_id, display_name, guest_id, joined_at, total_score")
-    .eq("room_id", room.id)
-    .eq("guest_id", guestId)
-    .maybeSingle();
-
-  if (existingPlayer) {
-    return ok("Already joined this room", { player: existingPlayer });
-  }
-
-  if (room.status === "finished") {
-    return fail("Room has finished.");
-  }
-
-  if (room.status !== "lobby") {
-    return fail("Join window is closed. Game already started.", 409);
-  }
-
-  const { data: player, error: playerError } = await supabase
-    .from("room_players")
-    .insert({
-      room_id: room.id,
-      display_name: displayName,
-      guest_id: guestId
-    })
-    .select("id, room_id, display_name, guest_id, joined_at, total_score")
-    .maybeSingle();
-
-  if (playerError || !player) {
-    const reason = [playerError?.message, playerError?.details, playerError?.hint]
+  const player = Array.isArray(data) ? data[0] : data;
+  if (error || !player) {
+    const reason = [error?.message, error?.details, error?.hint]
       .filter((value) => Boolean(value))
       .join(" | ");
 
-    if (reason.includes("ROOM_FULL")) {
-      return fail(`Room is full. Maximum ${MAX_ROOM_PLAYERS} players reached.`, 409);
+    if (reason.includes("ROOM_NOT_FOUND")) {
+      return fail(`Room ${roomCode} not found in active database.`, 404);
+    }
+
+    if (reason.includes("ROOM_FINISHED")) {
+      return fail("Room has finished.");
     }
 
     if (reason.includes("ROOM_JOIN_CLOSED")) {
       return fail("Join window is closed. Game already started.", 409);
     }
 
-    if (reason.includes("duplicate key value violates unique constraint")) {
-      const { data: duplicatePlayer } = await supabase
-        .from("room_players")
-        .select("id, room_id, display_name, guest_id, joined_at, total_score")
-        .eq("room_id", room.id)
-        .eq("guest_id", guestId)
-        .maybeSingle();
-
-      if (duplicatePlayer) {
-        return ok("Already joined this room", { player: duplicatePlayer });
-      }
+    if (reason.includes("ROOM_FULL")) {
+      return fail(`Room is full. Maximum ${MAX_ROOM_PLAYERS} players reached.`, 409);
     }
 
     return fail(`Failed to join room. ${reason || "Unknown database error."}`, 500);
